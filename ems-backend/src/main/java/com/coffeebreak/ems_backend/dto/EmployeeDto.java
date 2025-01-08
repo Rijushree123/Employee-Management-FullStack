@@ -1,7 +1,10 @@
 package com.coffeebreak.ems_backend.dto;
 
-import jakarta.persistence.Id;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
@@ -13,4 +16,5 @@ public class EmployeeDto {
 	private String firstName;
 	private String lastName;
 	private String email;
+	private Long departmentId;
 }

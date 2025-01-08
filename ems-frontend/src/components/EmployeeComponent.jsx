@@ -2,14 +2,25 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import { addEmployee, getEmployee, updateEmployee } from '../services/EmployeeService'
 import { useNavigate, useParams } from 'react-router-dom'
+import { listDepartments } from '../services/DepartmentService'
 
 const AddEmployeeComponent = () => {
     const [firstName, setFirstName] = useState('')
     const [lastName, setLastName] = useState('')
     const [email, setEmail] = useState('')
+    const [department, setDepartment] = useState('')
+    const [departmentId, setDepartmentId] = useState('')
+    const [departments, setDepartments] = useState([])
     const [error, setError] = useState('')
     const navigate = useNavigate()
     const {id} = useParams()
+
+    useEffect(() => {
+        listDepartments().then((response)=>{
+            setDepartments(response.data)
+        }).catch((error) => console.error(error))
+    },[])
+
     useEffect(() => {
       if(id){
         getEmployee(id).then((response)=>{
@@ -24,7 +35,7 @@ const AddEmployeeComponent = () => {
     const saveEmployee = (e) => {
         e.preventDefault()
         if (validForm()) {
-            const employee = { firstName, lastName, email }
+            const employee = { firstName, lastName, email, departmentId }
             console.log(employee)
             addEmployee(employee)
                 .then((response) => {
@@ -37,7 +48,7 @@ const AddEmployeeComponent = () => {
     const editEmployee = (e) =>{
         e.preventDefault()
         if (validForm()) {
-            const employee = { firstName, lastName, email }
+            const employee = { firstName, lastName, email, departmentId }
             console.log(employee)
             updateEmployee(id, employee)
                 .then((response) => {
@@ -67,6 +78,13 @@ const AddEmployeeComponent = () => {
             errorsCopy.email = ''
         } else {
             errorsCopy.email = "Email is required"
+            valid = false
+        }
+        
+        if (departmentId) {
+            errorsCopy.department = ''
+        } else {
+            errorsCopy.department = "Select Department"
             valid = false
         }
         setError(errorsCopy)
@@ -121,6 +139,22 @@ const AddEmployeeComponent = () => {
                                     onChange={(e) => setEmail(e.target.value)}>
                                 </input>
                                 {error.email && <div className='invalid-feedback'>{error.email}</div>}
+                            </div>
+                            <div className='form-group mb-2'>
+                                <label className='form-label'>Department: </label>
+                                <select className={`form-control ${error.department?'is-invalid':''}`}
+                                        value={departmentId} 
+                                        onChange={(e)=>setDepartmentId(e.target.value)}>
+                                <option value="Select Department">Select Department</option>
+                                {
+                                     departments.map(department => 
+                                        <option key={department.id} value={department.id}>
+                                          {department.departmentName}
+                                        </option>
+                                      )
+                                }
+                                </select>
+                                {error.department && <div className='invalid-feedback'>{error.department}</div>}
                             </div>
                             <button className='btn btn-success' onClick={(id)?editEmployee:saveEmployee}>Submit</button>
                         </form>

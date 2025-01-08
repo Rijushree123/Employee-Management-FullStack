@@ -40,6 +40,7 @@ const ListDepartmentComponent = () => {
                         <th>Id</th>
                         <th>Department Name</th>
                         <th>Department Description</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>
